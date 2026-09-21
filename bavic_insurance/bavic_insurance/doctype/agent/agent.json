@@ -11,7 +11,9 @@
   "intermediary_type",
   "agent_email",
   "column_break_noaq",
-  "agent_phone_number"
+  "agent_phone_number",
+  "targets_section",
+  "targets"
  ],
  "fields": [
   {
@@ -44,12 +46,23 @@
    "fieldname": "agent_phone_number",
    "fieldtype": "Data",
    "label": "Agent Phone Number"
+  },
+  {
+   "fieldname": "targets_section",
+   "fieldtype": "Section Break",
+   "label": "Sales Targets"
+  },
+  {
+   "fieldname": "targets",
+   "fieldtype": "Table",
+   "label": "Targets",
+   "options": "Target Detail"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-02 14:58:22.887139",
+ "modified": "2026-08-17 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Agent",

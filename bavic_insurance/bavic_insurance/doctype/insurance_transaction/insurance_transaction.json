@@ -16,18 +16,24 @@
   "policy_holder_name",
   "policy_holder_phone",
   "section_break_policy",
-  "effective_date",
+  "insurer",
+  "product",
   "business_type",
   "intermediary",
   "column_break_policy",
+  "effective_date",
+  "months",
   "renewal_date",
-  "product",
   "section_break_financial",
   "amount",
   "commission_rate",
   "commission_amount",
+  "withholding_tax_percent",
+  "withholding_tax_amount",
+  "net_commission_amount",
   "column_break_financial",
   "premium_payment",
+  "next_payment_date",
   "company_percent",
   "company_amount",
   "agent_percent",
@@ -96,10 +102,17 @@
    "label": "Policy & Product Details"
   },
   {
-   "fieldname": "effective_date",
-   "fieldtype": "Date",
+   "fieldname": "insurer",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Effective Date",
+   "label": "Insurer",
+   "options": "Insurer"
+  },
+  {
+   "fieldname": "product",
+   "fieldtype": "Link",
+   "label": "Product",
+   "options": "Insurance Product",
    "reqd": 1
   },
   {
@@ -110,28 +123,34 @@
    "reqd": 1
   },
   {
+   "fieldname": "intermediary",
+   "fieldtype": "Link",
+   "label": "Agent / SFE",
+   "options": "Agent",
+   "reqd": 1
+  },
+  {
    "fieldname": "column_break_policy",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "effective_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Effective Date",
+   "reqd": 1
+  },
+  {
+   "default": "12",
+   "fieldname": "months",
+   "fieldtype": "Int",
+   "label": "Period (Months)"
   },
   {
    "fieldname": "renewal_date",
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Renewal Date",
-   "reqd": 1
-  },
-  {
-   "fieldname": "product",
-   "fieldtype": "Link",
-   "label": "Product",
-   "options": "Insurance Product",
-   "reqd": 1
-  },
-  {
-   "fieldname": "intermediary",
-   "fieldtype": "Link",
-   "label": "Agent / SFE",
-   "options": "Agent",
    "reqd": 1
   },
   {
@@ -149,8 +168,7 @@
   {
    "fieldname": "commission_rate",
    "fieldtype": "Percent",
-   "label": "Commission Rate (%)",
-   "read_only": 1
+   "label": "Commission Rate (%)"
   },
   {
    "fieldname": "commission_amount",
@@ -159,14 +177,46 @@
    "read_only": 1
   },
   {
+   "default": "0.0",
+   "fieldname": "withholding_tax_percent",
+   "fieldtype": "Percent",
+   "label": "Withholding Tax (%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "withholding_tax_amount",
+   "fieldtype": "Currency",
+   "label": "Withholding Tax Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "net_commission_amount",
+   "fieldtype": "Currency",
+   "label": "Net Commission (After WHT)",
+   "read_only": 1
+  },
+  {
    "fieldname": "column_break_financial",
    "fieldtype": "Column Break"
   },
   {
+   "fieldname": "premium_payment",
+   "fieldtype": "Select",
+   "label": "Premium Payment Method",
+   "options": "Full Premium\nInsurance Premium Finance IPF",
+   "reqd": 1
+  },
+  {
+   "fieldname": "next_payment_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Next Payment Date",
+   "read_only": 1
+  },
+  {
    "fieldname": "company_percent",
    "fieldtype": "Percent",
-   "label": "Company Share (%)",
-   "read_only": 1
+   "label": "Company Share (%)"
   },
   {
    "fieldname": "company_amount",
@@ -177,8 +227,7 @@
   {
    "fieldname": "agent_percent",
    "fieldtype": "Percent",
-   "label": "Agent Share (%)",
-   "read_only": 1
+   "label": "Agent Share (%)"
   },
   {
    "fieldname": "agent_amount",
@@ -205,20 +254,13 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "premium_payment",
-   "fieldtype": "Select",
-   "label": "Premium Payment Method",
-   "options": "Full Premium\nInsurance Premium Finance IPF",
-   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-08-02 16:37:25.369472",
+ "modified": "2026-08-29 12:14:01.215959",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Insurance Transaction",

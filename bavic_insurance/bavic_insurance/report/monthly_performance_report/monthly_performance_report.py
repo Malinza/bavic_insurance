@@ -96,7 +96,20 @@ def get_columns():
 			"label": "Status / Outcome",
 			"fieldname": "status",
 			"fieldtype": "Data",
-			"width": 150
+			"width": 140
+		},
+		{
+			"label": "Created By",
+			"fieldname": "owner",
+			"fieldtype": "Link",
+			"options": "User",
+			"width": 140
+		},
+		{
+			"label": "Created At",
+			"fieldname": "creation",
+			"fieldtype": "Datetime",
+			"width": 160
 		}
 	]
 
@@ -173,6 +186,7 @@ def get_data(filters, from_date, to_date):
 	data.append({"section": "2. NEW BUSINESS ACQUIRED"})
 	new_biz = frappe.db.sql(f"""
 		SELECT t.customer, t.product, t.amount, t.commission_amount, t.company_amount, t.agent_amount, t.posting_date,
+		       t.owner, t.creation,
 		       (SELECT COUNT(name) FROM `tabPolicy Holder Detail` ph WHERE ph.parent = t.customer) as members
 		FROM `tabInsurance Transaction` t
 		{tx_clause} AND t.business_type LIKE '%%New%%'
@@ -190,14 +204,16 @@ def get_data(filters, from_date, to_date):
 			"commission_amount": row.commission_amount,
 			"company_amount": row.company_amount,
 			"agent_amount": row.agent_amount,
-			"status": "Active"
+			"status": "Active",
+			"owner": row.owner,
+			"creation": row.creation
 		})
 	data.append({})
 
 	# 3. Policy Renewals
 	data.append({"section": "3. POLICY RENEWALS"})
 	renewals = frappe.db.sql(f"""
-		SELECT customer, product, renewal_date, amount, commission_amount, company_amount, agent_amount
+		SELECT customer, product, renewal_date, amount, commission_amount, company_amount, agent_amount, owner, creation
 		FROM `tabInsurance Transaction`
 		{tx_clause} AND (business_type LIKE '%%Renewal%%' OR renewal_date <= %(to_date)s)
 		ORDER BY renewal_date DESC
@@ -213,14 +229,16 @@ def get_data(filters, from_date, to_date):
 			"commission_amount": r.commission_amount,
 			"company_amount": r.company_amount,
 			"agent_amount": r.agent_amount,
-			"status": "Renewed"
+			"status": "Renewed",
+			"owner": r.owner,
+			"creation": r.creation
 		})
 	data.append({})
 
 	# 4. Claims Report
 	data.append({"section": "4. CLAIMS REPORT"})
 	claims = frappe.db.sql(f"""
-		SELECT customer, claim_type, amount, status, claim_date
+		SELECT customer, claim_type, amount, status, claim_date, owner, creation
 		FROM `tabInsurance Claim`
 		{clm_clause}
 		ORDER BY claim_date DESC
@@ -233,14 +251,16 @@ def get_data(filters, from_date, to_date):
 			"type": c.claim_type,
 			"date": c.claim_date,
 			"amount": c.amount,
-			"status": c.status
+			"status": c.status,
+			"owner": c.owner,
+			"creation": c.creation
 		})
 	data.append({})
 
 	# 5. Client Visits and Meetings
 	data.append({"section": "5. CLIENT VISITS & MEETINGS"})
 	visits = frappe.db.sql(f"""
-		SELECT customer, purpose_of_visit, outcome, visit_date
+		SELECT customer, purpose_of_visit, outcome, visit_date, owner, creation
 		FROM `tabClient Visit`
 		{vst_clause}
 		ORDER BY visit_date DESC
@@ -252,7 +272,9 @@ def get_data(filters, from_date, to_date):
 			"client_name": v.customer,
 			"type": v.purpose_of_visit,
 			"date": v.visit_date,
-			"status": v.outcome
+			"status": v.outcome,
+			"owner": v.owner,
+			"creation": v.creation
 		})
 	data.append({})
 
@@ -281,13 +303,15 @@ def get_data(filters, from_date, to_date):
 
 	# 7. Recommendations
 	data.append({"section": "7. RECOMMENDATIONS & ACTION ITEMS"})
-	recs = frappe.db.get_all("Business Recommendation", fields=["title", "category", "priority", "status", "description"])
+	recs = frappe.db.get_all("Business Recommendation", fields=["title", "category", "priority", "status", "description", "owner", "creation"])
 	for rec in recs:
 		data.append({
 			"section": "7. RECOMMENDATIONS",
 			"client_name": rec.title,
 			"type": rec.category,
-			"status": f"{rec.priority} | {rec.status}"
+			"status": f"{rec.priority} | {rec.status}",
+			"owner": rec.owner,
+			"creation": rec.creation
 		})
 
 	# Chart Data

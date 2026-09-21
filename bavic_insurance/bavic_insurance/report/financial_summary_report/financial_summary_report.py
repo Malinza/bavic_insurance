@@ -67,28 +67,40 @@ def get_columns():
 			"width": 120
 		},
 		{
-			"label": "Total Premium Generated (TZS)",
+			"label": "Total Premium (TZS)",
 			"fieldname": "total_premium",
 			"fieldtype": "Currency",
-			"width": 180
+			"width": 170
 		},
 		{
-			"label": "Total Commission Received (TZS)",
+			"label": "Gross Commission (TZS)",
 			"fieldname": "total_commission",
 			"fieldtype": "Currency",
-			"width": 180
+			"width": 170
 		},
 		{
-			"label": "Company Share Amount (TZS)",
+			"label": "Withholding Tax (TZS)",
+			"fieldname": "withholding_tax",
+			"fieldtype": "Currency",
+			"width": 160
+		},
+		{
+			"label": "Net Commission (TZS)",
+			"fieldname": "net_commission",
+			"fieldtype": "Currency",
+			"width": 160
+		},
+		{
+			"label": "Company Share (TZS)",
 			"fieldname": "company_amount",
 			"fieldtype": "Currency",
-			"width": 170
+			"width": 160
 		},
 		{
-			"label": "Agent Share Amount (TZS)",
+			"label": "Agent Share (TZS)",
 			"fieldname": "agent_amount",
 			"fieldtype": "Currency",
-			"width": 170
+			"width": 160
 		},
 		{
 			"label": "Claims Paid (TZS)",
@@ -97,16 +109,17 @@ def get_columns():
 			"width": 150
 		},
 		{
-			"label": "Net Financial Balance (TZS)",
+			"label": "Net Balance (TZS)",
 			"fieldname": "net_balance",
 			"fieldtype": "Currency",
-			"width": 180
+			"width": 170
 		}
 	]
 
 def get_data(filters, period, from_date, to_date):
 	cust_filter = filters.get("customer")
 	agent_filter = filters.get("agent_sfe")
+	business_type_filter = filters.get("business_type")
 
 	tx_where = ["posting_date >= %(from_date)s AND posting_date <= %(to_date)s"]
 	tx_vals = {"from_date": from_date, "to_date": to_date}
@@ -116,11 +129,14 @@ def get_data(filters, period, from_date, to_date):
 	if agent_filter:
 		tx_where.append("intermediary = %(agent_sfe)s")
 		tx_vals["agent_sfe"] = agent_filter
-
+	if business_type_filter:
+		tx_where.append("business_type = %(business_type)s")
+		tx_vals["business_type"] = business_type_filter
+		
 	tx_clause = "WHERE " + " AND ".join(tx_where)
 
 	tx_rows = frappe.db.sql(f"""
-		SELECT posting_date, amount, commission_amount, company_amount, agent_amount
+		SELECT posting_date, amount, commission_amount, withholding_tax_amount, net_commission_amount, company_amount, agent_amount
 		FROM `tabInsurance Transaction`
 		{tx_clause}
 		ORDER BY posting_date ASC
@@ -146,13 +162,20 @@ def get_data(filters, period, from_date, to_date):
 			buckets[bkey] = {
 				"period_bucket": bkey, "policies_count": 0,
 				"total_premium": 0.0, "total_commission": 0.0,
+				"withholding_tax": 0.0, "net_commission": 0.0,
 				"company_amount": 0.0, "agent_amount": 0.0,
 				"claims_paid": 0.0, "net_balance": 0.0
 			}
 		b = buckets[bkey]
 		b["policies_count"] += 1
 		b["total_premium"] += flt(tx.amount)
-		b["total_commission"] += flt(tx.commission_amount)
+		comm = flt(tx.commission_amount)
+		wht = flt(tx.withholding_tax_amount)
+		net_comm = flt(tx.net_commission_amount) if tx.net_commission_amount is not None else (comm - wht)
+
+		b["total_commission"] += comm
+		b["withholding_tax"] += wht
+		b["net_commission"] += net_comm
 		b["company_amount"] += flt(tx.company_amount)
 		b["agent_amount"] += flt(tx.agent_amount)
 
@@ -162,6 +185,7 @@ def get_data(filters, period, from_date, to_date):
 			buckets[bkey] = {
 				"period_bucket": bkey, "policies_count": 0,
 				"total_premium": 0.0, "total_commission": 0.0,
+				"withholding_tax": 0.0, "net_commission": 0.0,
 				"company_amount": 0.0, "agent_amount": 0.0,
 				"claims_paid": 0.0, "net_balance": 0.0
 			}
@@ -183,6 +207,8 @@ def get_chart(data, period):
 	labels = [d["period_bucket"] for d in data]
 	premiums = [d["total_premium"] for d in data]
 	commissions = [d["total_commission"] for d in data]
+	whts = [d["withholding_tax"] for d in data]
+	net_comms = [d["net_commission"] for d in data]
 	comp_shares = [d["company_amount"] for d in data]
 	agent_shares = [d["agent_amount"] for d in data]
 
@@ -191,13 +217,15 @@ def get_chart(data, period):
 			"labels": labels,
 			"datasets": [
 				{"name": "Total Premium", "values": premiums},
-				{"name": "Total Commission", "values": commissions},
+				{"name": "Gross Commission", "values": commissions},
+				{"name": "Withholding Tax", "values": whts},
+				{"name": "Net Commission", "values": net_comms},
 				{"name": "Company Share", "values": comp_shares},
 				{"name": "Agent Share", "values": agent_shares}
 			]
 		},
 		"type": "bar",
-		"colors": ["#3b5bdb", "#22d3ee", "#10b981", "#f59e0b"]
+		"colors": ["#3b5bdb", "#22d3ee", "#ef4444", "#10b981", "#8b5cf6", "#f59e0b"]
 	}
 
 def get_report_summary(data):
@@ -206,6 +234,8 @@ def get_report_summary(data):
 
 	tot_premium = sum(d["total_premium"] for d in data)
 	tot_comm = sum(d["total_commission"] for d in data)
+	tot_wht = sum(d["withholding_tax"] for d in data)
+	tot_net = sum(d["net_commission"] for d in data)
 	tot_comp = sum(d["company_amount"] for d in data)
 	tot_agent = sum(d["agent_amount"] for d in data)
 	tot_claims = sum(d["claims_paid"] for d in data)
@@ -213,8 +243,10 @@ def get_report_summary(data):
 
 	return [
 		{"value": tot_premium, "indicator": "Blue", "label": "Total Premium Generated (TZS)", "datatype": "Currency"},
-		{"value": tot_comm, "indicator": "Green", "label": "Total Commission Received (TZS)", "datatype": "Currency"},
-		{"value": tot_comp, "indicator": "Teal", "label": "Company Share (TZS)", "datatype": "Currency"},
+		{"value": tot_comm, "indicator": "Teal", "label": "Gross Commission (TZS)", "datatype": "Currency"},
+		{"value": tot_wht, "indicator": "Red", "label": "Withholding Tax (TZS)", "datatype": "Currency"},
+		{"value": tot_net, "indicator": "Green", "label": "Net Commission (TZS)", "datatype": "Currency"},
+		{"value": tot_comp, "indicator": "Purple", "label": "Company Share (TZS)", "datatype": "Currency"},
 		{"value": tot_agent, "indicator": "Orange", "label": "Agent Share (TZS)", "datatype": "Currency"},
-		{"value": net_bal, "indicator": "Purple", "label": "Net Financial Balance (TZS)", "datatype": "Currency"}
+		{"value": net_bal, "indicator": "Blue", "label": "Net Financial Balance (TZS)", "datatype": "Currency"}
 	]

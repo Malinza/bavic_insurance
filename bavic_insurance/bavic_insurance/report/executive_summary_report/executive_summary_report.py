@@ -97,8 +97,20 @@ def get_columns():
 			"width": 160
 		},
 		{
-			"label": "Total Commission (TZS)",
+			"label": "Gross Commission (TZS)",
 			"fieldname": "total_commission",
+			"fieldtype": "Currency",
+			"width": 160
+		},
+		{
+			"label": "Withholding Tax (TZS)",
+			"fieldname": "withholding_tax",
+			"fieldtype": "Currency",
+			"width": 160
+		},
+		{
+			"label": "Net Commission (TZS)",
+			"fieldname": "net_commission",
 			"fieldtype": "Currency",
 			"width": 160
 		},
@@ -127,7 +139,7 @@ def get_data(filters, period, from_date, to_date):
 	tx_clause = "WHERE " + " AND ".join(tx_where)
 
 	tx_rows = frappe.db.sql(f"""
-		SELECT name, posting_date, amount, commission_amount, company_amount, agent_amount, business_type
+		SELECT name, posting_date, amount, commission_amount, withholding_tax_amount, net_commission_amount, company_amount, agent_amount, business_type
 		FROM `tabInsurance Transaction`
 		{tx_clause}
 		ORDER BY posting_date ASC
@@ -164,12 +176,19 @@ def get_data(filters, period, from_date, to_date):
 			buckets[bkey] = {
 				"period_bucket": bkey, "total_policies": 0, "new_business_count": 0,
 				"renewals_count": 0, "claims_count": 0, "visits_count": 0,
-				"total_premium": 0.0, "total_commission": 0.0, "company_share": 0.0, "agent_share": 0.0
+				"total_premium": 0.0, "total_commission": 0.0, "withholding_tax": 0.0,
+				"net_commission": 0.0, "company_share": 0.0, "agent_share": 0.0
 			}
 		b = buckets[bkey]
 		b["total_policies"] += 1
 		b["total_premium"] += flt(tx.amount)
-		b["total_commission"] += flt(tx.commission_amount)
+		comm = flt(tx.commission_amount)
+		wht = flt(tx.withholding_tax_amount)
+		net_comm = flt(tx.net_commission_amount) if tx.net_commission_amount is not None else (comm - wht)
+		
+		b["total_commission"] += comm
+		b["withholding_tax"] += wht
+		b["net_commission"] += net_comm
 		b["company_share"] += flt(tx.company_amount)
 		b["agent_share"] += flt(tx.agent_amount)
 		
@@ -185,7 +204,8 @@ def get_data(filters, period, from_date, to_date):
 			buckets[bkey] = {
 				"period_bucket": bkey, "total_policies": 0, "new_business_count": 0,
 				"renewals_count": 0, "claims_count": 0, "visits_count": 0,
-				"total_premium": 0.0, "total_commission": 0.0, "company_share": 0.0, "agent_share": 0.0
+				"total_premium": 0.0, "total_commission": 0.0, "withholding_tax": 0.0,
+				"net_commission": 0.0, "company_share": 0.0, "agent_share": 0.0
 			}
 		buckets[bkey]["claims_count"] += 1
 
@@ -195,7 +215,8 @@ def get_data(filters, period, from_date, to_date):
 			buckets[bkey] = {
 				"period_bucket": bkey, "total_policies": 0, "new_business_count": 0,
 				"renewals_count": 0, "claims_count": 0, "visits_count": 0,
-				"total_premium": 0.0, "total_commission": 0.0, "company_share": 0.0, "agent_share": 0.0
+				"total_premium": 0.0, "total_commission": 0.0, "withholding_tax": 0.0,
+				"net_commission": 0.0, "company_share": 0.0, "agent_share": 0.0
 			}
 		buckets[bkey]["visits_count"] += 1
 
@@ -209,6 +230,8 @@ def get_chart(data, period):
 	labels = [d["period_bucket"] for d in data]
 	premiums = [d["total_premium"] for d in data]
 	commissions = [d["total_commission"] for d in data]
+	whts = [d["withholding_tax"] for d in data]
+	net_comms = [d["net_commission"] for d in data]
 	company_shares = [d["company_share"] for d in data]
 	agent_shares = [d["agent_share"] for d in data]
 
@@ -217,13 +240,15 @@ def get_chart(data, period):
 			"labels": labels,
 			"datasets": [
 				{"name": "Total Premium", "values": premiums},
-				{"name": "Total Commission", "values": commissions},
+				{"name": "Gross Commission", "values": commissions},
+				{"name": "Withholding Tax", "values": whts},
+				{"name": "Net Commission", "values": net_comms},
 				{"name": "Company Share", "values": company_shares},
 				{"name": "Agent Share", "values": agent_shares}
 			]
 		},
 		"type": "bar",
-		"colors": ["#3b5bdb", "#22d3ee", "#10b981", "#f59e0b"]
+		"colors": ["#3b5bdb", "#22d3ee", "#ef4444", "#10b981", "#8b5cf6", "#f59e0b"]
 	}
 
 def get_report_summary(data):
@@ -233,13 +258,17 @@ def get_report_summary(data):
 	tot_policies = sum(d["total_policies"] for d in data)
 	tot_premium = sum(d["total_premium"] for d in data)
 	tot_comm = sum(d["total_commission"] for d in data)
+	tot_wht = sum(d["withholding_tax"] for d in data)
+	tot_net = sum(d["net_commission"] for d in data)
 	tot_comp = sum(d["company_share"] for d in data)
 	tot_agent = sum(d["agent_share"] for d in data)
 
 	return [
 		{"value": tot_policies, "indicator": "Blue", "label": "Total Policies Issued", "datatype": "Int"},
 		{"value": tot_premium, "indicator": "Blue", "label": "Total Premium (TZS)", "datatype": "Currency"},
-		{"value": tot_comm, "indicator": "Green", "label": "Total Commission (TZS)", "datatype": "Currency"},
-		{"value": tot_comp, "indicator": "Teal", "label": "Company Share (TZS)", "datatype": "Currency"},
+		{"value": tot_comm, "indicator": "Teal", "label": "Gross Commission (TZS)", "datatype": "Currency"},
+		{"value": tot_wht, "indicator": "Red", "label": "Withholding Tax (TZS)", "datatype": "Currency"},
+		{"value": tot_net, "indicator": "Green", "label": "Net Commission (TZS)", "datatype": "Currency"},
+		{"value": tot_comp, "indicator": "Purple", "label": "Company Share (TZS)", "datatype": "Currency"},
 		{"value": tot_agent, "indicator": "Orange", "label": "Agent Share (TZS)", "datatype": "Currency"}
 	]

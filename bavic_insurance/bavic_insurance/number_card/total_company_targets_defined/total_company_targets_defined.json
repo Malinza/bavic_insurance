@@ -1,0 +1,23 @@
+{
+ "creation": "2026-08-17 21:24:06.149862",
+ "currency": "TZS",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Target Detail",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Total Company Targets Defined",
+ "modified": "2026-08-17 22:04:53.993158",
+ "modified_by": "Administrator",
+ "module": "BAVIC Insurance",
+ "name": "Total Company Targets Defined",
+ "owner": "Administrator",
+ "parent_document_type": "Bavic Settings",
+ "report_function": "Sum",
+ "show_full_number": 0,
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Daily",
+ "type": "Document Type"
+}

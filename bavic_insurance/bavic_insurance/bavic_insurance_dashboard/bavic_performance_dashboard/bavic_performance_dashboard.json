@@ -4,7 +4,13 @@
    "card": "Total Premium Generated"
   },
   {
-   "card": "Total Commission Received"
+   "card": "Total Gross Commission Received"
+  },
+  {
+   "card": "Total Withholding Tax Deducted"
+  },
+  {
+   "card": "Total Net Commission Received"
   },
   {
    "card": "Company Share Amount"
@@ -23,9 +29,30 @@
   },
   {
    "card": "Client Visits Held"
+  },
+  {
+   "card": "Total Company Targets Defined"
+  },
+  {
+   "card": "Total Premium Targets Set"
+  },
+  {
+   "card": "Total Commission Targets Set"
   }
  ],
  "charts": [
+  {
+   "chart": "Company Target vs Actual",
+   "width": "Half"
+  },
+  {
+   "chart": "Agent Target vs Actual",
+   "width": "Half"
+  },
+  {
+   "chart": "Product Target vs Actual",
+   "width": "Half"
+  },
   {
    "chart": "Monthly Premium Volume",
    "width": "Half"
@@ -35,11 +62,15 @@
    "width": "Half"
   },
   {
-   "chart": "Claims by Status",
+   "chart": "Policies by Product",
    "width": "Half"
   },
   {
-   "chart": "Policies by Product",
+   "chart": "Policies by Insurer",
+   "width": "Half"
+  },
+  {
+   "chart": "Claims by Status",
    "width": "Half"
   }
  ],
@@ -50,7 +81,7 @@
  "idx": 0,
  "is_default": 1,
  "is_standard": 1,
- "modified": "2026-08-02 01:05:28.776666",
+ "modified": "2026-08-17 22:04:54.381737",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Bavic Performance Dashboard",

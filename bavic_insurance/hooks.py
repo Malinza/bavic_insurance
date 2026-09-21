@@ -148,23 +148,11 @@ app_license = "mit"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"bavic_insurance.tasks.all"
-# 	],
-# 	"daily": [
-# 		"bavic_insurance.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"bavic_insurance.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"bavic_insurance.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"bavic_insurance.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"daily": [
+		"bavic_insurance.tasks.daily_update_ipf_payment_dates"
+	],
+}
 
 # Testing
 # -------

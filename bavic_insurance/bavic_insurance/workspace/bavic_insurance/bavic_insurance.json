@@ -57,10 +57,40 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reports & Analytics",
-   "link_count": 8,
+   "link_count": 11,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Agent Target Performance",
+   "link_count": 0,
+   "link_to": "Agent Target Performance",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Product Target Performance",
+   "link_count": 0,
+   "link_to": "Product Target Performance",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Company Target Performance",
+   "link_count": 0,
+   "link_to": "Company Target Performance",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   },
   {
    "hidden": 0,
@@ -195,7 +225,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Masters",
-   "link_count": 6,
+   "link_count": 7,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -206,6 +236,16 @@
    "label": "Customer",
    "link_count": 0,
    "link_to": "Customer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Insurer",
+   "link_count": 0,
+   "link_to": "Insurer",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -261,7 +301,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-08-02 14:17:35.421646",
+ "modified": "2026-08-17 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Bavic Insurance",

@@ -25,6 +25,12 @@ frappe.query_reports["Financial Summary Report"] = {
 			"options": "Customer"
 		},
 		{
+			"fieldname": "business_type",
+			"label": __("Business Type"),
+			"fieldtype": "Link",
+			"options": "Business Type"
+		},
+		{
 			"fieldname": "agent_sfe",
 			"label": __("Agent / SFE"),
 			"fieldtype": "Link",

@@ -8,7 +8,9 @@
  "engine": "InnoDB",
  "field_order": [
   "product_name",
-  "commission_rate"
+  "commission_rate",
+  "targets_section",
+  "targets"
  ],
  "fields": [
   {
@@ -25,12 +27,23 @@
    "fieldtype": "Percent",
    "in_list_view": 1,
    "label": "Commission Rate (%)"
+  },
+  {
+   "fieldname": "targets_section",
+   "fieldtype": "Section Break",
+   "label": "Sales Targets"
+  },
+  {
+   "fieldname": "targets",
+   "fieldtype": "Table",
+   "label": "Targets",
+   "options": "Target Detail"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-08-02 00:00:00.000000",
+ "modified": "2026-08-17 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Insurance Product",

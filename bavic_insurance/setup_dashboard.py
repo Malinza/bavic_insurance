@@ -17,11 +17,35 @@ def create_dashboard_and_cards():
 			"stats_time_interval": "Monthly"
 		},
 		{
-			"label": "Total Commission Received",
+			"label": "Total Gross Commission Received",
 			"type": "Document Type",
 			"document_type": "Insurance Transaction",
 			"function": "Sum",
 			"aggregate_function_based_on": "commission_amount",
+			"is_public": 1,
+			"is_standard": 1,
+			"module": module,
+			"show_percentage_stats": 1,
+			"stats_time_interval": "Monthly"
+		},
+		{
+			"label": "Total Withholding Tax Deducted",
+			"type": "Document Type",
+			"document_type": "Insurance Transaction",
+			"function": "Sum",
+			"aggregate_function_based_on": "withholding_tax_amount",
+			"is_public": 1,
+			"is_standard": 1,
+			"module": module,
+			"show_percentage_stats": 1,
+			"stats_time_interval": "Monthly"
+		},
+		{
+			"label": "Total Net Commission Received",
+			"type": "Document Type",
+			"document_type": "Insurance Transaction",
+			"function": "Sum",
+			"aggregate_function_based_on": "net_commission_amount",
 			"is_public": 1,
 			"is_standard": 1,
 			"module": module,
@@ -96,6 +120,43 @@ def create_dashboard_and_cards():
 			"module": module,
 			"show_percentage_stats": 1,
 			"stats_time_interval": "Monthly"
+		},
+		{
+			"label": "Total Company Targets Defined",
+			"type": "Document Type",
+			"document_type": "Target Detail",
+			"is_child_table": 1,
+			"parent_document_type": "Bavic Settings",
+			"function": "Count",
+			"is_public": 1,
+			"is_standard": 1,
+			"module": module
+		},
+		{
+			"label": "Total Premium Targets Set",
+			"type": "Document Type",
+			"document_type": "Target Detail",
+			"is_child_table": 1,
+			"parent_document_type": "Bavic Settings",
+			"function": "Sum",
+			"aggregate_function_based_on": "target_amount",
+			"filters_json": '[["Target Detail","target_type","=","Premium"]]',
+			"is_public": 1,
+			"is_standard": 1,
+			"module": module
+		},
+		{
+			"label": "Total Commission Targets Set",
+			"type": "Document Type",
+			"document_type": "Target Detail",
+			"is_child_table": 1,
+			"parent_document_type": "Bavic Settings",
+			"function": "Sum",
+			"aggregate_function_based_on": "target_amount",
+			"filters_json": '[["Target Detail","target_type","=","Commission"]]',
+			"is_public": 1,
+			"is_standard": 1,
+			"module": module
 		}
 	]
 
@@ -110,9 +171,44 @@ def create_dashboard_and_cards():
 			})
 			doc.insert(ignore_permissions=True)
 			frappe.db.commit()
+		else:
+			doc = frappe.get_doc("Number Card", label)
+			doc.update(card_data)
+			doc.save(ignore_permissions=True)
+			frappe.db.commit()
 		created_card_names.append(label)
 
 	charts = [
+		{
+			"chart_name": "Company Target vs Actual",
+			"chart_type": "Report",
+			"report_name": "Company Target Performance",
+			"use_report_chart": 1,
+			"is_public": 1,
+			"is_standard": 1,
+			"module": module,
+			"filters_json": "{}"
+		},
+		{
+			"chart_name": "Agent Target vs Actual",
+			"chart_type": "Report",
+			"report_name": "Agent Target Performance",
+			"use_report_chart": 1,
+			"is_public": 1,
+			"is_standard": 1,
+			"module": module,
+			"filters_json": "{}"
+		},
+		{
+			"chart_name": "Product Target vs Actual",
+			"chart_type": "Report",
+			"report_name": "Product Target Performance",
+			"use_report_chart": 1,
+			"is_public": 1,
+			"is_standard": 1,
+			"module": module,
+			"filters_json": "{}"
+		},
 		{
 			"chart_name": "Monthly Premium Volume",
 			"chart_type": "Sum",
@@ -146,18 +242,6 @@ def create_dashboard_and_cards():
 			"filters_json": "{}"
 		},
 		{
-			"chart_name": "Claims by Status",
-			"chart_type": "Group By",
-			"document_type": "Insurance Claim",
-			"group_by_based_on": "status",
-			"group_by_type": "Count",
-			"type": "Donut",
-			"is_public": 1,
-			"is_standard": 1,
-			"module": module,
-			"filters_json": "{}"
-		},
-		{
 			"chart_name": "Policies by Product",
 			"chart_type": "Group By",
 			"document_type": "Insurance Transaction",
@@ -165,6 +249,31 @@ def create_dashboard_and_cards():
 			"group_by_type": "Count",
 			"type": "Bar",
 			"color": "#22d3ee",
+			"is_public": 1,
+			"is_standard": 1,
+			"module": module,
+			"filters_json": "{}"
+		},
+		{
+			"chart_name": "Policies by Insurer",
+			"chart_type": "Group By",
+			"document_type": "Insurance Transaction",
+			"group_by_based_on": "insurer",
+			"group_by_type": "Count",
+			"type": "Bar",
+			"color": "#818cf8",
+			"is_public": 1,
+			"is_standard": 1,
+			"module": module,
+			"filters_json": "{}"
+		},
+		{
+			"chart_name": "Claims by Status",
+			"chart_type": "Group By",
+			"document_type": "Insurance Claim",
+			"group_by_based_on": "status",
+			"group_by_type": "Count",
+			"type": "Donut",
 			"is_public": 1,
 			"is_standard": 1,
 			"module": module,
@@ -183,26 +292,35 @@ def create_dashboard_and_cards():
 			})
 			doc.insert(ignore_permissions=True)
 			frappe.db.commit()
+		else:
+			doc = frappe.get_doc("Dashboard Chart", name)
+			doc.update(chart_data)
+			doc.save(ignore_permissions=True)
+			frappe.db.commit()
 		created_chart_names.append(name)
 
 	dashboard_name = "Bavic Performance Dashboard"
 	if not frappe.db.exists("Dashboard", dashboard_name):
-		doc = frappe.get_doc({
-			"doctype": "Dashboard",
-			"dashboard_name": dashboard_name,
-			"name": dashboard_name,
-			"is_default": 1,
-			"is_standard": 1,
-			"module": module,
-			"cards": [{"card": c} for c in created_card_names],
-			"charts": [{"chart": c, "width": "Half"} for c in created_chart_names]
-		})
+		doc = frappe.new_doc("Dashboard")
+		doc.dashboard_name = dashboard_name
+		doc.name = dashboard_name
+		doc.is_default = 1
+		doc.is_standard = 1
+		doc.module = module
+		for c in created_card_names:
+			doc.append("cards", {"card": c})
+		for c in created_chart_names:
+			doc.append("charts", {"chart": c, "width": "Half"})
 		doc.insert(ignore_permissions=True)
 		frappe.db.commit()
 	else:
 		doc = frappe.get_doc("Dashboard", dashboard_name)
-		doc.cards = [{"card": c} for c in created_card_names]
-		doc.charts = [{"chart": c, "width": "Half"} for c in created_chart_names]
+		doc.set("cards", [])
+		doc.set("charts", [])
+		for c in created_card_names:
+			doc.append("cards", {"card": c})
+		for c in created_chart_names:
+			doc.append("charts", {"chart": c, "width": "Half"})
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
 

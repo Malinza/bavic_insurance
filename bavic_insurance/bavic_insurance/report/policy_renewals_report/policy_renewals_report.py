@@ -123,6 +123,19 @@ def get_columns():
 			"fieldname": "status",
 			"fieldtype": "Data",
 			"width": 120
+		},
+		{
+			"label": "Created By",
+			"fieldname": "owner",
+			"fieldtype": "Link",
+			"options": "User",
+			"width": 140
+		},
+		{
+			"label": "Created At",
+			"fieldname": "creation",
+			"fieldtype": "Datetime",
+			"width": 160
 		}
 	]
 
@@ -156,6 +169,8 @@ def get_data(filters, from_date, to_date):
 			t.company_amount,
 			t.agent_amount,
 			t.intermediary,
+			t.owner,
+			t.creation,
 			CASE 
 				WHEN t.renewal_date < CURRENT_DATE THEN 'Overdue'
 				WHEN t.renewal_date <= DATEDIFF(CURRENT_DATE, -30) THEN 'Due Soon'

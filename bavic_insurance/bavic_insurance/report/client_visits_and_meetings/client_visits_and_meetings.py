@@ -92,6 +92,19 @@ def get_columns():
 			"fieldname": "outcome",
 			"fieldtype": "Small Text",
 			"width": 220
+		},
+		{
+			"label": "Created By",
+			"fieldname": "owner",
+			"fieldtype": "Link",
+			"options": "User",
+			"width": 140
+		},
+		{
+			"label": "Created At",
+			"fieldname": "creation",
+			"fieldtype": "Datetime",
+			"width": 160
 		}
 	]
 
@@ -116,7 +129,9 @@ def get_data(filters, from_date, to_date):
 			customer,
 			agent_sfe,
 			purpose_of_visit,
-			outcome
+			outcome,
+			owner,
+			creation
 		FROM 
 			`tabClient Visit`
 		{where_clause}

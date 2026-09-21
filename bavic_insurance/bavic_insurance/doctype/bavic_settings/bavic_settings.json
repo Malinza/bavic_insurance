@@ -6,10 +6,27 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "commission_section",
+  "company_commission_percent",
   "agent_commission_percent",
-  "company_commission_percent"
+  "withholding_tax_percent",
+  "targets_section",
+  "targets"
  ],
  "fields": [
+  {
+   "fieldname": "commission_section",
+   "fieldtype": "Section Break",
+   "label": "Commission & Tax Defaults"
+  },
+  {
+   "default": "60.0",
+   "fieldname": "company_commission_percent",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Company Commission Share (%)",
+   "reqd": 1
+  },
   {
    "default": "40.0",
    "fieldname": "agent_commission_percent",
@@ -19,19 +36,29 @@
    "reqd": 1
   },
   {
-   "default": "60.0",
-   "fieldname": "company_commission_percent",
+   "default": "0.0",
+   "fieldname": "withholding_tax_percent",
    "fieldtype": "Percent",
    "in_list_view": 1,
-   "label": "Company Commission Share (%)",
-   "reqd": 1
+   "label": "Withholding Tax Percent (%)"
+  },
+  {
+   "fieldname": "targets_section",
+   "fieldtype": "Section Break",
+   "label": "Company Targets"
+  },
+  {
+   "fieldname": "targets",
+   "fieldtype": "Table",
+   "label": "Company Targets",
+   "options": "Target Detail"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-08-02 00:00:00.000000",
+ "modified": "2026-08-17 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Bavic Settings",

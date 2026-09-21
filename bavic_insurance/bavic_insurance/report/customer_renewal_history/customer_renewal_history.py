@@ -73,6 +73,19 @@ def get_columns():
 			"fieldtype": "Link",
 			"options": "Agent",
 			"width": 160
+		},
+		{
+			"label": "Created By",
+			"fieldname": "owner",
+			"fieldtype": "Link",
+			"options": "User",
+			"width": 140
+		},
+		{
+			"label": "Created At",
+			"fieldname": "creation",
+			"fieldtype": "Datetime",
+			"width": 160
 		}
 	]
 
@@ -107,7 +120,9 @@ def get_data(filters):
 			renewal_date,
 			posting_date,
 			amount,
-			intermediary
+			intermediary,
+			owner,
+			creation
 		FROM 
 			`tabInsurance Transaction`
 		{where_clause}

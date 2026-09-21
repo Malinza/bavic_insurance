@@ -103,6 +103,19 @@ def get_columns():
 			"fieldname": "description",
 			"fieldtype": "Small Text",
 			"width": 200
+		},
+		{
+			"label": "Created By",
+			"fieldname": "owner",
+			"fieldtype": "Link",
+			"options": "User",
+			"width": 140
+		},
+		{
+			"label": "Created At",
+			"fieldname": "creation",
+			"fieldtype": "Datetime",
+			"width": 160
 		}
 	]
 
@@ -133,7 +146,9 @@ def get_data(filters, from_date, to_date):
 			claim_type,
 			amount,
 			status,
-			description
+			description,
+			owner,
+			creation
 		FROM 
 			`tabInsurance Claim`
 		{where_clause}
