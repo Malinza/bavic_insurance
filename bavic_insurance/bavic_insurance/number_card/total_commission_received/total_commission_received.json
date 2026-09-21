@@ -1,0 +1,23 @@
+{
+ "aggregate_function_based_on": "commission_amount",
+ "creation": "2026-08-02 01:05:28.451415",
+ "currency": "TZS",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Insurance Transaction",
+ "function": "Sum",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Total Commission Received",
+ "modified": "2026-08-02 01:05:28.451415",
+ "modified_by": "Administrator",
+ "module": "BAVIC Insurance",
+ "name": "Total Commission Received",
+ "owner": "Administrator",
+ "report_function": "Sum",
+ "show_full_number": 0,
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Monthly",
+ "type": "Document Type"
+}

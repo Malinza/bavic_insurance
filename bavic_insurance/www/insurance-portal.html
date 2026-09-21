@@ -1,0 +1,31 @@
+---
+title: BAVIC Insurance Portal
+no_breadcrumbs: 1
+no_header: 1
+no_sidebar: 1
+no_footer: 1
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BAVIC Insurance Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/bavic_insurance/frontend/css/index.css">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    // Expose frappe CSRF token to the Vue app
+    window.frappe = window.frappe || {};
+    window.frappe.csrf_token = "{{ frappe.session.csrf_token }}";
+  </script>
+  <script type="module" src="/assets/bavic_insurance/frontend/js/index.js"></script>
+</body>
+</html>

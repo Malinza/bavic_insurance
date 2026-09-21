@@ -1,0 +1,248 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-07-17 01:07:42.804551",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "posting_date",
+  "section_break_customer",
+  "customer",
+  "policy_holder_email",
+  "column_break_customer",
+  "policy_holder_name",
+  "policy_holder_phone",
+  "section_break_policy",
+  "effective_date",
+  "business_type",
+  "intermediary",
+  "column_break_policy",
+  "renewal_date",
+  "product",
+  "section_break_financial",
+  "amount",
+  "commission_rate",
+  "commission_amount",
+  "column_break_financial",
+  "premium_payment",
+  "company_percent",
+  "company_amount",
+  "agent_percent",
+  "agent_amount",
+  "section_break_additional",
+  "journal_description",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "INS-.YYYY.-.",
+   "fieldname": "naming_series",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Naming Series",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "no_copy": 1,
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_customer",
+   "fieldtype": "Section Break",
+   "label": "Customer & Policy Holder"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "policy_holder_email",
+   "fieldtype": "Data",
+   "label": "Policy Holder Email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_customer",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "policy_holder_name",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Policy Holder Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "policy_holder_phone",
+   "fieldtype": "Data",
+   "label": "Policy Holder Phone",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_policy",
+   "fieldtype": "Section Break",
+   "label": "Policy & Product Details"
+  },
+  {
+   "fieldname": "effective_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Effective Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "business_type",
+   "fieldtype": "Link",
+   "label": "Business Type",
+   "options": "Business Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_policy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "renewal_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Renewal Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "product",
+   "fieldtype": "Link",
+   "label": "Product",
+   "options": "Insurance Product",
+   "reqd": 1
+  },
+  {
+   "fieldname": "intermediary",
+   "fieldtype": "Link",
+   "label": "Agent / SFE",
+   "options": "Agent",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_financial",
+   "fieldtype": "Section Break",
+   "label": "Financial Details"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Premium (TZS)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "commission_rate",
+   "fieldtype": "Percent",
+   "label": "Commission Rate (%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "commission_amount",
+   "fieldtype": "Currency",
+   "label": "Total Commission Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_financial",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company_percent",
+   "fieldtype": "Percent",
+   "label": "Company Share (%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company_amount",
+   "fieldtype": "Currency",
+   "label": "Company Share Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "agent_percent",
+   "fieldtype": "Percent",
+   "label": "Agent Share (%)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "agent_amount",
+   "fieldtype": "Currency",
+   "label": "Agent Share Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_additional",
+   "fieldtype": "Section Break",
+   "label": "Additional Information"
+  },
+  {
+   "fieldname": "journal_description",
+   "fieldtype": "Small Text",
+   "label": "Journal Description"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Insurance Transaction",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "premium_payment",
+   "fieldtype": "Select",
+   "label": "Premium Payment Method",
+   "options": "Full Premium\nInsurance Premium Finance IPF",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-08-02 16:37:25.369472",
+ "modified_by": "Administrator",
+ "module": "BAVIC Insurance",
+ "name": "Insurance Transaction",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

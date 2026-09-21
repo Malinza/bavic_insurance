@@ -1,0 +1,220 @@
+import frappe
+from frappe.utils import getdate, nowdate, add_days, add_months, flt
+
+def execute(filters=None):
+	if not filters:
+		filters = {}
+
+	period = filters.get("period", "Monthly")
+	from_date, to_date = get_date_range(filters)
+
+	columns = get_columns()
+	data = get_data(filters, period, from_date, to_date)
+	chart = get_chart(data, period)
+	report_summary = get_report_summary(data)
+	
+	return columns, data, None, chart, report_summary
+
+def get_date_range(filters):
+	period = filters.get("period", "Monthly")
+	today = getdate(nowdate())
+
+	if filters.get("from_date") and filters.get("to_date"):
+		return getdate(filters.get("from_date")), getdate(filters.get("to_date"))
+
+	if period == "Daily":
+		return add_days(today, -30), today
+	elif period == "Weekly":
+		return add_days(today, -90), today
+	elif period == "Monthly":
+		start = today.replace(month=1, day=1)
+		return start, today
+	elif period == "Quarterly":
+		return add_months(today, -12), today
+	elif period == "Yearly":
+		return add_months(today, -36), today
+	
+	return add_months(today, -12), today
+
+def get_date_bucket(date_val, period):
+	d = getdate(date_val)
+	if period == "Daily":
+		return d.strftime("%Y-%m-%d")
+	elif period == "Weekly":
+		year, week, _ = d.isocalendar()
+		return f"{year}-W{week:02d}"
+	elif period == "Monthly":
+		return d.strftime("%Y-%m")
+	elif period == "Quarterly":
+		q = ((d.month - 1) // 3) + 1
+		return f"{d.year}-Q{q}"
+	elif period == "Yearly":
+		return str(d.year)
+	return d.strftime("%Y-%m")
+
+def get_columns():
+	return [
+		{
+			"label": "Time Period",
+			"fieldname": "period_bucket",
+			"fieldtype": "Data",
+			"width": 140
+		},
+		{
+			"label": "Policies Count",
+			"fieldname": "policies_count",
+			"fieldtype": "Int",
+			"width": 120
+		},
+		{
+			"label": "Total Premium Generated (TZS)",
+			"fieldname": "total_premium",
+			"fieldtype": "Currency",
+			"width": 180
+		},
+		{
+			"label": "Total Commission Received (TZS)",
+			"fieldname": "total_commission",
+			"fieldtype": "Currency",
+			"width": 180
+		},
+		{
+			"label": "Company Share Amount (TZS)",
+			"fieldname": "company_amount",
+			"fieldtype": "Currency",
+			"width": 170
+		},
+		{
+			"label": "Agent Share Amount (TZS)",
+			"fieldname": "agent_amount",
+			"fieldtype": "Currency",
+			"width": 170
+		},
+		{
+			"label": "Claims Paid (TZS)",
+			"fieldname": "claims_paid",
+			"fieldtype": "Currency",
+			"width": 150
+		},
+		{
+			"label": "Net Financial Balance (TZS)",
+			"fieldname": "net_balance",
+			"fieldtype": "Currency",
+			"width": 180
+		}
+	]
+
+def get_data(filters, period, from_date, to_date):
+	cust_filter = filters.get("customer")
+	agent_filter = filters.get("agent_sfe")
+
+	tx_where = ["posting_date >= %(from_date)s AND posting_date <= %(to_date)s"]
+	tx_vals = {"from_date": from_date, "to_date": to_date}
+	if cust_filter:
+		tx_where.append("customer = %(customer)s")
+		tx_vals["customer"] = cust_filter
+	if agent_filter:
+		tx_where.append("intermediary = %(agent_sfe)s")
+		tx_vals["agent_sfe"] = agent_filter
+
+	tx_clause = "WHERE " + " AND ".join(tx_where)
+
+	tx_rows = frappe.db.sql(f"""
+		SELECT posting_date, amount, commission_amount, company_amount, agent_amount
+		FROM `tabInsurance Transaction`
+		{tx_clause}
+		ORDER BY posting_date ASC
+	""", tx_vals, as_dict=True)
+
+	clm_where = ["claim_date >= %(from_date)s AND claim_date <= %(to_date)s AND status IN ('Paid', 'Approved')"]
+	clm_vals = {"from_date": from_date, "to_date": to_date}
+	if cust_filter:
+		clm_where.append("customer = %(customer)s")
+		clm_vals["customer"] = cust_filter
+
+	clm_clause = "WHERE " + " AND ".join(clm_where)
+
+	clm_rows = frappe.db.sql(f"""
+		SELECT claim_date, amount FROM `tabInsurance Claim` {clm_clause}
+	""", clm_vals, as_dict=True)
+
+	buckets = {}
+
+	for tx in tx_rows:
+		bkey = get_date_bucket(tx.posting_date, period)
+		if bkey not in buckets:
+			buckets[bkey] = {
+				"period_bucket": bkey, "policies_count": 0,
+				"total_premium": 0.0, "total_commission": 0.0,
+				"company_amount": 0.0, "agent_amount": 0.0,
+				"claims_paid": 0.0, "net_balance": 0.0
+			}
+		b = buckets[bkey]
+		b["policies_count"] += 1
+		b["total_premium"] += flt(tx.amount)
+		b["total_commission"] += flt(tx.commission_amount)
+		b["company_amount"] += flt(tx.company_amount)
+		b["agent_amount"] += flt(tx.agent_amount)
+
+	for clm in clm_rows:
+		bkey = get_date_bucket(clm.claim_date, period)
+		if bkey not in buckets:
+			buckets[bkey] = {
+				"period_bucket": bkey, "policies_count": 0,
+				"total_premium": 0.0, "total_commission": 0.0,
+				"company_amount": 0.0, "agent_amount": 0.0,
+				"claims_paid": 0.0, "net_balance": 0.0
+			}
+		buckets[bkey]["claims_paid"] += flt(clm.amount)
+
+	sorted_keys = sorted(buckets.keys())
+	result = []
+	for k in sorted_keys:
+		b = buckets[k]
+		b["net_balance"] = b["company_amount"] - b["claims_paid"]
+		result.append(b)
+
+	return result
+
+def get_chart(data, period):
+	if not data:
+		return None
+
+	labels = [d["period_bucket"] for d in data]
+	premiums = [d["total_premium"] for d in data]
+	commissions = [d["total_commission"] for d in data]
+	comp_shares = [d["company_amount"] for d in data]
+	agent_shares = [d["agent_amount"] for d in data]
+
+	return {
+		"data": {
+			"labels": labels,
+			"datasets": [
+				{"name": "Total Premium", "values": premiums},
+				{"name": "Total Commission", "values": commissions},
+				{"name": "Company Share", "values": comp_shares},
+				{"name": "Agent Share", "values": agent_shares}
+			]
+		},
+		"type": "bar",
+		"colors": ["#3b5bdb", "#22d3ee", "#10b981", "#f59e0b"]
+	}
+
+def get_report_summary(data):
+	if not data:
+		return []
+
+	tot_premium = sum(d["total_premium"] for d in data)
+	tot_comm = sum(d["total_commission"] for d in data)
+	tot_comp = sum(d["company_amount"] for d in data)
+	tot_agent = sum(d["agent_amount"] for d in data)
+	tot_claims = sum(d["claims_paid"] for d in data)
+	net_bal = tot_comp - tot_claims
+
+	return [
+		{"value": tot_premium, "indicator": "Blue", "label": "Total Premium Generated (TZS)", "datatype": "Currency"},
+		{"value": tot_comm, "indicator": "Green", "label": "Total Commission Received (TZS)", "datatype": "Currency"},
+		{"value": tot_comp, "indicator": "Teal", "label": "Company Share (TZS)", "datatype": "Currency"},
+		{"value": tot_agent, "indicator": "Orange", "label": "Agent Share (TZS)", "datatype": "Currency"},
+		{"value": net_bal, "indicator": "Purple", "label": "Net Financial Balance (TZS)", "datatype": "Currency"}
+	]

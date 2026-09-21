@@ -1,0 +1,22 @@
+{
+ "creation": "2026-08-02 01:05:28.540453",
+ "currency": "TZS",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Insurance Claim",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Total Claims Handled",
+ "modified": "2026-08-02 01:05:28.540453",
+ "modified_by": "Administrator",
+ "module": "BAVIC Insurance",
+ "name": "Total Claims Handled",
+ "owner": "Administrator",
+ "report_function": "Sum",
+ "show_full_number": 0,
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Monthly",
+ "type": "Document Type"
+}

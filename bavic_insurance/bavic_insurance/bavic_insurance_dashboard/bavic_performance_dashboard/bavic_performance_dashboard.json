@@ -1,0 +1,58 @@
+{
+ "cards": [
+  {
+   "card": "Total Premium Generated"
+  },
+  {
+   "card": "Total Commission Received"
+  },
+  {
+   "card": "Company Share Amount"
+  },
+  {
+   "card": "Agent Share Amount"
+  },
+  {
+   "card": "Total Policies Issued"
+  },
+  {
+   "card": "Total Claims Handled"
+  },
+  {
+   "card": "Total Claims Amount"
+  },
+  {
+   "card": "Client Visits Held"
+  }
+ ],
+ "charts": [
+  {
+   "chart": "Monthly Premium Volume",
+   "width": "Half"
+  },
+  {
+   "chart": "Monthly Commission Volume",
+   "width": "Half"
+  },
+  {
+   "chart": "Claims by Status",
+   "width": "Half"
+  },
+  {
+   "chart": "Policies by Product",
+   "width": "Half"
+  }
+ ],
+ "creation": "2026-08-02 01:05:28.776666",
+ "dashboard_name": "Bavic Performance Dashboard",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 1,
+ "is_standard": 1,
+ "modified": "2026-08-02 01:05:28.776666",
+ "modified_by": "Administrator",
+ "module": "BAVIC Insurance",
+ "name": "Bavic Performance Dashboard",
+ "owner": "Administrator"
+}

@@ -1,0 +1,23 @@
+{
+ "aggregate_function_based_on": "agent_amount",
+ "creation": "2026-08-02 01:05:28.489848",
+ "currency": "TZS",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Insurance Transaction",
+ "function": "Sum",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Agent Share Amount",
+ "modified": "2026-08-02 01:05:28.489848",
+ "modified_by": "Administrator",
+ "module": "BAVIC Insurance",
+ "name": "Agent Share Amount",
+ "owner": "Administrator",
+ "report_function": "Sum",
+ "show_full_number": 0,
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Monthly",
+ "type": "Document Type"
+}
