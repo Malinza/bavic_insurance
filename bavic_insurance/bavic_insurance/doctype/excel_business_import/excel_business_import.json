@@ -1,0 +1,137 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-09-21 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "excel_file",
+  "submit_after_import",
+  "section_break_status",
+  "status",
+  "column_break_counters",
+  "imported_rows",
+  "skipped_rows",
+  "failed_rows",
+  "section_break_live",
+  "live_progress_html",
+  "section_break_log",
+  "import_log"
+ ],
+ "fields": [
+  {
+   "default": "EBI-.YYYY.-.",
+   "fieldname": "naming_series",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Naming Series",
+   "read_only": 1
+  },
+  {
+   "fieldname": "excel_file",
+   "fieldtype": "Attach",
+   "label": "Excel File (.xlsx)",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "submit_after_import",
+   "fieldtype": "Check",
+   "label": "Submit Transactions After Import"
+  },
+  {
+   "fieldname": "section_break_status",
+   "fieldtype": "Section Break",
+   "label": "Import Status"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nIn Progress\nCompleted\nCompleted with Errors\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_counters",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "imported_rows",
+   "fieldtype": "Int",
+   "label": "Rows Imported",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "skipped_rows",
+   "fieldtype": "Int",
+   "label": "Rows Skipped (Duplicates)",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "failed_rows",
+   "fieldtype": "Int",
+   "label": "Rows Failed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_live",
+   "fieldtype": "Section Break",
+   "label": "Live Import Progress & Activity Feed"
+  },
+  {
+   "fieldname": "live_progress_html",
+   "fieldtype": "HTML",
+   "label": "Live Progress"
+  },
+  {
+   "collapsible": 1,
+   "collapsed": 1,
+   "fieldname": "section_break_log",
+   "fieldtype": "Section Break",
+   "label": "Raw Audit Log (Text)"
+  },
+  {
+   "fieldname": "import_log",
+   "fieldtype": "Long Text",
+   "label": "Log",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-21 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "BAVIC Insurance",
+ "name": "Excel Business Import",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
