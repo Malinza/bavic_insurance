@@ -18,8 +18,8 @@ class ExcelBusinessImport(Document):
 def run_import(docname):
 	"""
 	Main import function.
-	Reads the attached .xlsx, ensures all masters exist, and creates
-	Insurance Transaction records (optionally submitting them).
+	Reads the attached .xlsx, resolves column headers flexibly, ensures all
+	masters exist, and creates Insurance Transaction records (optionally submitting).
 
 	Publishes realtime progress events for EVERY input row so the client
 	sees a live progress bar and live activity stream.
@@ -51,22 +51,54 @@ def run_import(docname):
 
 	ws = wb.active  # first/only sheet
 
-	# Read header row (row 1) to build column index map
-	headers = {}
+	# Build normalized header index map
+	raw_headers = {}
+	norm_headers = {}
 	for cell in ws[1]:
-		if cell.value:
-			headers[str(cell.value).strip()] = cell.column - 1  # 0-based index
+		if cell.value is not None:
+			raw_val = str(cell.value).strip()
+			idx = cell.column - 1  # 0-based index
+			raw_headers[raw_val] = idx
+			norm_headers[_norm_col(raw_val)] = idx
 
-	REQUIRED_COLS = [
-		"Policy Holder Name", "Effective Date", "Renewal Date",
-		"PostingDate", "EntryAmount", "Journal Description",
-		"Product", "Business Type", "Intermediary Name", "Intermediary Type",
-	]
-	missing = [c for c in REQUIRED_COLS if c not in headers]
+	def find_col(candidates):
+		for cand in candidates:
+			if cand in raw_headers:
+				return raw_headers[cand]
+			cand_norm = _norm_col(cand)
+			if cand_norm in norm_headers:
+				return norm_headers[cand_norm]
+		return None
+
+	# Resolve required columns with flexible aliases
+	col_holder    = find_col(["Policy Holder Name", "Policyholder Name", "Policy Holder", "Policyholder", "Customer Name", "Customer"])
+	col_eff_date  = find_col(["Effective Date", "Start Date", "Commencement Date"])
+	col_ren_date  = find_col(["Renewal Date", "Expiry Date", "End Date"])
+	col_post_date = find_col(["PostingDate", "Posting Date", "Date"])
+	col_amount    = find_col(["EntryAmount", "Entry Amount", "Amount", "Premium", "Premium Amount"])
+	col_product   = find_col(["Product", "Product Name", "Plan", "Insurance Product"])
+	col_b_type    = find_col(["Business Type", "Business_Type", "Type of Business"])
+
+	missing = []
+	if col_holder is None: missing.append("Policy Holder Name")
+	if col_eff_date is None: missing.append("Effective Date")
+	if col_ren_date is None: missing.append("Renewal Date")
+	if col_post_date is None: missing.append("PostingDate")
+	if col_amount is None: missing.append("EntryAmount")
+	if col_product is None: missing.append("Product")
+	if col_b_type is None: missing.append("Business Type")
+
 	if missing:
 		msg = f"❌ Missing required columns: {', '.join(missing)}"
 		_fail(doc, msg)
 		return {"error": msg}
+
+	# Optional columns with smart fallbacks
+	col_agent_name = find_col(["Intermediary Name", "Intermediary", "Agent Name", "Agent"])
+	col_agent_type = find_col(["Intermediary Type", "Agent Type"])
+	col_journal    = find_col(["Journal Description", "Journal_Description", "Description", "Narration", "Remarks"])
+	col_email      = find_col(["PlicyHolder Email", "Policy Holder Email", "Policyholder Email", "Email"])
+	col_phone      = find_col(["PlicyHolder Phone", "Policy Holder Phone", "Policyholder Phone", "Phone", "Mobile"])
 
 	# Collect all non-blank data rows
 	raw_rows = []
@@ -90,6 +122,9 @@ def run_import(docname):
 	# Ensure default insurer "Bavic" exists
 	_ensure_insurer("Bavic", known_insurers)
 
+	# Ensure default agent type exists
+	_ensure_agent_type("Agent Independent", known_agent_types)
+
 	# Emit init event to client
 	_publish_event("excel_import_init", {
 		"docname": docname,
@@ -103,26 +138,33 @@ def run_import(docname):
 	failed = 0
 	submit_after = bool(doc.submit_after_import)
 
+	# Adaptive timing based on row count
+	sleep_time = 0.002 if total_rows > 300 else 0.012
+	commit_interval = 50 if total_rows > 300 else 15
+
 	for idx, (row_num, row) in enumerate(raw_rows):
 		current_idx = idx + 1
 		percent = round((current_idx / total_rows) * 100, 1)
 
-		def col(name):
-			i = headers.get(name)
-			return row[i] if i is not None and i < len(row) else None
+		def get_val(col_idx):
+			if col_idx is not None and col_idx < len(row):
+				return row[col_idx]
+			return None
 
-		policy_holder_name = _clean(col("Policy Holder Name"))
-		effective_date     = _to_date(col("Effective Date"))
-		renewal_date       = _to_date(col("Renewal Date"))
-		posting_date       = _to_date(col("PostingDate"))
-		amount_val         = col("EntryAmount") or 0
-		journal_desc       = _clean(col("Journal Description")) or ""
-		product_name       = _clean(col("Product"))
-		business_type_name = _clean(col("Business Type"))
-		intermediary_name  = _clean(col("Intermediary Name"))
-		intermediary_type  = _clean(col("Intermediary Type"))
-		email              = _clean(col("PlicyHolder Email"))
-		phone              = _clean(col("PlicyHolder Phone"))
+		policy_holder_name = _clean(get_val(col_holder))
+		effective_date     = _to_date(get_val(col_eff_date))
+		renewal_date       = _to_date(get_val(col_ren_date))
+		posting_date       = _to_date(get_val(col_post_date))
+		amount_val         = get_val(col_amount) or 0
+		product_name       = _clean(get_val(col_product))
+		business_type_name = _clean(get_val(col_b_type))
+
+		# Optional fields with smart fallbacks
+		journal_desc       = _clean(get_val(col_journal)) or ""
+		intermediary_name  = _clean(get_val(col_agent_name)) or "BAVIC INSURANCE AGENCY"
+		intermediary_type  = _clean(get_val(col_agent_type)) or "Agent Independent"
+		email              = _clean(get_val(col_email))
+		phone              = _clean(get_val(col_phone))
 
 		try:
 			amount = float(amount_val)
@@ -130,8 +172,7 @@ def run_import(docname):
 			amount = 0.0
 
 		# Check mandatory fields
-		if not all([policy_holder_name, effective_date, renewal_date, posting_date,
-					product_name, business_type_name, intermediary_name, intermediary_type]):
+		if not all([policy_holder_name, effective_date, renewal_date, posting_date, product_name, business_type_name]):
 			failed += 1
 			row_status = "failed"
 			detail = "Missing required column(s)"
@@ -269,11 +310,12 @@ def run_import(docname):
 				"failed": failed,
 			})
 
-		# Brief pacing (15ms) ensures WebSocket packets stream smoothly to client UI
-		time.sleep(0.015)
+		# Smooth WebSocket event streaming pacing
+		if sleep_time > 0:
+			time.sleep(sleep_time)
 
 		# Periodically commit database so records are saved
-		if current_idx % 15 == 0:
+		if current_idx % commit_interval == 0:
 			frappe.db.commit()
 
 	frappe.db.commit()
@@ -323,7 +365,7 @@ def _ensure_insurer(name, cache=None):
 
 def _ensure_agent_type(type_name, cache=None):
 	if not type_name:
-		return
+		type_name = "Agent Independent"
 	if cache is not None and type_name in cache:
 		return
 	if not frappe.db.exists("Agent Type", type_name):
@@ -333,20 +375,23 @@ def _ensure_agent_type(type_name, cache=None):
 		cache.add(type_name)
 
 
-def _ensure_agent(intermediary_name, intermediary_type, cache=None):
+def _ensure_agent(intermediary_name, intermediary_type=None, cache=None):
 	if not intermediary_name:
-		return
+		intermediary_name = "BAVIC INSURANCE AGENCY"
 	if cache is not None and intermediary_name in cache:
-		return
+		return intermediary_name
 	if not frappe.db.exists("Agent", intermediary_name):
+		type_to_use = intermediary_type or "Agent Independent"
+		_ensure_agent_type(type_to_use)
 		frappe.get_doc({
 			"doctype": "Agent",
 			"intermediary_name": intermediary_name,
-			"intermediary_type": intermediary_type,
+			"intermediary_type": type_to_use,
 		}).insert(ignore_permissions=True)
 		frappe.db.commit()
 	if cache is not None:
 		cache.add(intermediary_name)
+	return intermediary_name
 
 
 def _ensure_product(product_name, cache=None):
@@ -410,19 +455,28 @@ def _ensure_customer(policy_holder_name, email, phone, cache=None):
 # Duplicate Check
 # ---------------------------------------------------------------------------
 
-def _is_duplicate(customer, effective_date, amount, product, journal_description):
-	return bool(frappe.db.exists("Insurance Transaction", {
+def _is_duplicate(customer, effective_date, amount, product, journal_description=""):
+	filters = {
 		"customer":            customer,
 		"effective_date":      effective_date,
 		"amount":              float(amount),
 		"product":             product,
-		"journal_description": journal_description,
-	}))
+	}
+	if journal_description:
+		filters["journal_description"] = journal_description
+	return bool(frappe.db.exists("Insurance Transaction", filters))
 
 
 # ---------------------------------------------------------------------------
 # Utility & Realtime Helpers
 # ---------------------------------------------------------------------------
+
+def _norm_col(col_name):
+	"""Normalize column header for robust fuzzy matching."""
+	if not col_name:
+		return ""
+	return str(col_name).strip().lower().replace(" ", "").replace("_", "").replace("-", "")
+
 
 def _clean(value):
 	if value is None:
@@ -451,7 +505,6 @@ def _publish_event(event_name, payload):
 	Publish realtime event to both the user's private room and Desk site room.
 	Ensures immediate client delivery without waiting for database commits.
 	"""
-	# Transmit directly to logged-in user room
 	if frappe.session and frappe.session.user:
 		frappe.publish_realtime(
 			event=event_name,
@@ -460,7 +513,6 @@ def _publish_event(event_name, payload):
 			after_commit=False,
 		)
 
-	# Also broadcast to Desk site room so any open browser tab receives it
 	frappe.publish_realtime(
 		event=event_name,
 		message=payload,
