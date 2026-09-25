@@ -1,5 +1,6 @@
 import frappe
 from frappe.model.document import Document
+from frappe.utils import flt
 from frappe.utils.file_manager import get_file_path
 import openpyxl
 from datetime import datetime
@@ -116,6 +117,10 @@ def run_import(docname):
 	known_agents = set(frappe.get_all("Agent", pluck="name"))
 	known_agent_types = set(frappe.get_all("Agent Type", pluck="name"))
 	known_products = set(frappe.get_all("Insurance Product", pluck="name"))
+	product_rates = {
+		row.name: flt(row.commission_rate or 0)
+		for row in frappe.get_all("Insurance Product", fields=["name", "commission_rate"])
+	}
 	known_business_types = set(frappe.get_all("Business Type", pluck="name"))
 	known_customers = set(frappe.get_all("Customer", pluck="name"))
 
@@ -202,7 +207,7 @@ def run_import(docname):
 			# 1 — Masters get-or-create (in-memory cached)
 			_ensure_agent_type(intermediary_type, known_agent_types)
 			_ensure_agent(intermediary_name, intermediary_type, known_agents)
-			_ensure_product(product_name, known_products)
+			commission_rate = _ensure_product(product_name, known_products, product_rates)
 			_ensure_business_type(business_type_name, known_business_types)
 			customer_name = _ensure_customer(policy_holder_name, email, phone, known_customers)
 
@@ -249,6 +254,7 @@ def run_import(docname):
 				"effective_date":       effective_date,
 				"renewal_date":         renewal_date,
 				"amount":               amount,
+				"commission_rate":      commission_rate,
 				"premium_payment":      "Full Premium",
 				"journal_description":  journal_desc,
 			})
@@ -394,16 +400,35 @@ def _ensure_agent(intermediary_name, intermediary_type=None, cache=None):
 	return intermediary_name
 
 
-def _ensure_product(product_name, cache=None):
+def _ensure_product(product_name, cache=None, rate_cache=None):
+	"""Create the product when missing, and return its commission rate.
+
+	The import file does not carry a rate. A product that already exists keeps
+	the rate stored on Insurance Product. A product created here starts at 0.
+	"""
 	if not product_name:
-		return
-	if cache is not None and product_name in cache:
-		return
-	if not frappe.db.exists("Insurance Product", product_name):
-		frappe.get_doc({"doctype": "Insurance Product", "product_name": product_name}).insert(ignore_permissions=True)
+		return 0.0
+	if rate_cache is not None and product_name in rate_cache:
+		if cache is not None:
+			cache.add(product_name)
+		return flt(rate_cache[product_name] or 0)
+
+	if frappe.db.exists("Insurance Product", product_name):
+		rate = flt(frappe.db.get_value("Insurance Product", product_name, "commission_rate") or 0)
+	else:
+		frappe.get_doc({
+			"doctype": "Insurance Product",
+			"product_name": product_name,
+			"commission_rate": 0,
+		}).insert(ignore_permissions=True)
 		frappe.db.commit()
+		rate = 0.0
+
 	if cache is not None:
 		cache.add(product_name)
+	if rate_cache is not None:
+		rate_cache[product_name] = rate
+	return rate
 
 
 def _ensure_business_type(business_type_name, cache=None):

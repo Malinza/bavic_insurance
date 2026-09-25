@@ -12,7 +12,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": null,
- "modified": "2026-07-17 01:08:28.711337",
+ "modified": "2026-09-25 15:00:00.000000",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Customer Renewal History",
@@ -21,7 +21,41 @@
  "ref_doctype": "Insurance Transaction",
  "report_name": "Customer Renewal History",
  "report_type": "Script Report",
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "BAVIC System Administrator"
+  },
+  {
+   "role": "BAVIC System Owner"
+  },
+  {
+   "role": "BAVIC Executive"
+  },
+  {
+   "role": "BAVIC Director of Operations"
+  },
+  {
+   "role": "BAVIC Department Data Owner"
+  },
+  {
+   "role": "BAVIC Compliance Reviewer"
+  },
+  {
+   "role": "BAVIC Sales User"
+  },
+  {
+   "role": "BAVIC Finance User"
+  },
+  {
+   "role": "BAVIC Team Supervisor"
+  },
+  {
+   "role": "BAVIC Client Support"
+  }
+ ],
  "snapshot_report": 0,
  "timeout": 0
 }

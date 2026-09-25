@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"header_masters\",\"type\":\"header\",\"data\":{\"text\":\"<span style=\\\"font-size: 18px; letter-spacing: 0.18px;\\\"><b>Bavic Insurance</b></span>\",\"col\":12}},{\"id\":\"card_masters\",\"type\":\"card\",\"data\":{\"card_name\":\"Masters\",\"col\":4}},{\"id\":\"card_operations\",\"type\":\"card\",\"data\":{\"card_name\":\"Transactions\",\"col\":4}},{\"id\":\"card_reports\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports & Analytics\",\"col\":4}},{\"id\":\"spacer_1\",\"type\":\"spacer\",\"data\":{\"col\":12}}]",
+ "content": "[{\"id\":\"header_masters\",\"type\":\"header\",\"data\":{\"text\":\"<span style=\\\"font-size: 18px; letter-spacing: 0.18px;\\\"><b>Bavic Insurance</b></span>\",\"col\":12}},{\"id\":\"shortcut_dashboard\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Performance Dashboard\",\"col\":3}},{\"id\":\"shortcut_bulk_user\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bulk User\",\"col\":3}},{\"id\":\"card_masters\",\"type\":\"card\",\"data\":{\"card_name\":\"Masters\",\"col\":4}},{\"id\":\"card_operations\",\"type\":\"card\",\"data\":{\"card_name\":\"Transactions\",\"col\":4}},{\"id\":\"card_reports\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports & Analytics\",\"col\":4}},{\"id\":\"spacer_1\",\"type\":\"spacer\",\"data\":{\"col\":12}}]",
  "creation": "2026-08-02 01:34:52.995915",
  "custom_blocks": [],
  "docstatus": 0,
@@ -186,7 +186,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Transactions",
-   "link_count": 4,
+   "link_count": 5,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -227,6 +227,16 @@
    "label": "Business Recommendation",
    "link_count": 0,
    "link_to": "Business Recommendation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bulk User",
+   "link_count": 0,
+   "link_to": "Bulk User",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -311,7 +321,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-08-17 00:00:00.000000",
+ "modified": "2026-09-25 16:10:00.000000",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Bavic Insurance",
@@ -320,8 +330,59 @@
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "BAVIC System Administrator"
+  },
+  {
+   "role": "BAVIC System Owner"
+  },
+  {
+   "role": "BAVIC Executive"
+  },
+  {
+   "role": "BAVIC Director of Operations"
+  },
+  {
+   "role": "BAVIC Department Data Owner"
+  },
+  {
+   "role": "BAVIC Compliance Reviewer"
+  },
+  {
+   "role": "BAVIC Team Supervisor"
+  },
+  {
+   "role": "BAVIC Finance User"
+  },
+  {
+   "role": "BAVIC Sales User"
+  },
+  {
+   "role": "BAVIC Client Support"
+  },
+  {
+   "role": "BAVIC External User"
+  }
+ ],
  "sequence_id": 0.0,
- "shortcuts": [],
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "label": "Performance Dashboard",
+   "link_to": "Bavic Performance Dashboard",
+   "type": "Dashboard"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Bulk User",
+   "link_to": "Bulk User",
+   "type": "DocType"
+  }
+ ],
  "title": "Bavic Insurance"
 }

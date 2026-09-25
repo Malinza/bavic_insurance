@@ -1,0 +1,101 @@
+[
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC Executive",
+  "role_name": "BAVIC Executive",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC System Owner",
+  "role_name": "BAVIC System Owner",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC System Administrator",
+  "role_name": "BAVIC System Administrator",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC Director of Operations",
+  "role_name": "BAVIC Director of Operations",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC Department Data Owner",
+  "role_name": "BAVIC Department Data Owner",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC Team Supervisor",
+  "role_name": "BAVIC Team Supervisor",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC Sales User",
+  "role_name": "BAVIC Sales User",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC Finance User",
+  "role_name": "BAVIC Finance User",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC Client Support",
+  "role_name": "BAVIC Client Support",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC Compliance Reviewer",
+  "role_name": "BAVIC Compliance Reviewer",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "doctype": "Role",
+  "is_custom": 0,
+  "name": "BAVIC External User",
+  "role_name": "BAVIC External User",
+  "two_factor_auth": 0
+ }
+]

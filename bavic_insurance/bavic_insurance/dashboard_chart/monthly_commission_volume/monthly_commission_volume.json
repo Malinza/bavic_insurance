@@ -14,13 +14,50 @@
  "is_public": 1,
  "is_standard": 1,
  "last_synced_on": "2026-08-17 22:03:00.989183",
- "modified": "2026-08-17 22:04:54.218785",
+ "modified": "2026-09-25 15:00:00.000000",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Monthly Commission Volume",
  "number_of_groups": 0,
  "owner": "Administrator",
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "BAVIC System Administrator"
+  },
+  {
+   "role": "BAVIC System Owner"
+  },
+  {
+   "role": "BAVIC Executive"
+  },
+  {
+   "role": "BAVIC Director of Operations"
+  },
+  {
+   "role": "BAVIC Department Data Owner"
+  },
+  {
+   "role": "BAVIC Compliance Reviewer"
+  },
+  {
+   "role": "BAVIC Team Supervisor"
+  },
+  {
+   "role": "BAVIC Finance User"
+  },
+  {
+   "role": "BAVIC Sales User"
+  },
+  {
+   "role": "BAVIC Client Support"
+  },
+  {
+   "role": "BAVIC External User"
+  }
+ ],
  "show_values_over_chart": 0,
  "time_interval": "Monthly",
  "timeseries": 1,

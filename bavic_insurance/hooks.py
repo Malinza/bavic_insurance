@@ -5,6 +5,55 @@ app_description = "App specific for Bavic Insurance"
 app_email = "info@info.co.tz"
 app_license = "mit"
 
+# Roles and User permissions installed on every site during migrate.
+fixtures = [
+	{
+		"dt": "Role",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"BAVIC Executive",
+					"BAVIC System Owner",
+					"BAVIC System Administrator",
+					"BAVIC Director of Operations",
+					"BAVIC Department Data Owner",
+					"BAVIC Team Supervisor",
+					"BAVIC Sales User",
+					"BAVIC Finance User",
+					"BAVIC Client Support",
+					"BAVIC Compliance Reviewer",
+					"BAVIC External User",
+				],
+			]
+		],
+	},
+	{
+		"dt": "Custom DocPerm",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"bavic-user-system-manager-l0",
+					"bavic-user-system-manager-l1",
+					"bavic-user-desk-user-l0",
+					"bavic-user-system-administrator-l0",
+					"bavic-user-system-administrator-l1",
+					"bavic-user-system-owner-l0",
+					"bavic-user-system-owner-l1",
+					"bavic-user-team-supervisor-l0",
+					"bavic-user-team-supervisor-l1",
+					"bavic-role-profile-system-manager-l0",
+					"bavic-role-profile-system-manager-l1",
+					"bavic-role-profile-system-administrator-l0",
+				],
+			]
+		],
+	},
+]
+
 # Apps
 # ------------------
 

@@ -75,6 +75,42 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "BAVIC System Administrator",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "print": 1,
+   "read": 1,
+   "role": "BAVIC System Owner",
+   "write": 1
+  },
+  {
+   "print": 1,
+   "read": 1,
+   "role": "BAVIC Executive"
+  },
+  {
+   "print": 1,
+   "read": 1,
+   "role": "BAVIC Director of Operations"
+  },
+  {
+   "print": 1,
+   "read": 1,
+   "role": "BAVIC Department Data Owner"
+  },
+  {
+   "print": 1,
+   "read": 1,
+   "role": "BAVIC Compliance Reviewer"
   }
  ],
  "row_format": "Dynamic",

@@ -8,7 +8,7 @@
  "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2026-08-02 00:00:00.000000",
+ "modified": "2026-09-25 15:00:00.000000",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Client Visits and Meetings",
@@ -20,6 +20,33 @@
  "roles": [
   {
    "role": "System Manager"
+  },
+  {
+   "role": "BAVIC System Administrator"
+  },
+  {
+   "role": "BAVIC System Owner"
+  },
+  {
+   "role": "BAVIC Executive"
+  },
+  {
+   "role": "BAVIC Director of Operations"
+  },
+  {
+   "role": "BAVIC Department Data Owner"
+  },
+  {
+   "role": "BAVIC Compliance Reviewer"
+  },
+  {
+   "role": "BAVIC Team Supervisor"
+  },
+  {
+   "role": "BAVIC Sales User"
+  },
+  {
+   "role": "BAVIC Client Support"
   }
  ]
 }

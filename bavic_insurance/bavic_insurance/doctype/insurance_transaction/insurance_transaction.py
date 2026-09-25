@@ -8,8 +8,32 @@ class InsuranceTransaction(Document):
 		self.set_defaults_from_settings()
 		self.calculate_renewal_date()
 		self.calculate_next_payment_date()
-		self.calculate_commission()
 		self.validate_and_fetch_policy_holder()
+
+	def before_save(self):
+		self.recalculate_amounts()
+
+	def before_submit(self):
+		self.recalculate_amounts()
+
+	def recalculate_amounts(self):
+		"""Recalculate money fields from the rates on this document.
+
+		The import file does not include a commission rate. A zero rate on the
+		transaction is copied from Insurance Product, including when that
+		product rate is also zero.
+		"""
+		self.apply_product_commission_rate()
+		self.calculate_commission()
+
+	def apply_product_commission_rate(self):
+		if flt(self.commission_rate):
+			return
+		if not self.product:
+			self.commission_rate = 0.0
+			return
+		rate = frappe.db.get_value("Insurance Product", self.product, "commission_rate")
+		self.commission_rate = flt(rate or 0.0)
 
 	def set_defaults_from_settings(self):
 		settings = frappe.get_single("Bavic Settings")
@@ -32,50 +56,16 @@ class InsuranceTransaction(Document):
 				self.next_payment_date = add_months(getdate(self.effective_date), 1)
 
 	def calculate_commission(self):
-		# Default commission rate from product if not provided
-		if self.commission_rate is None or (flt(self.commission_rate) == 0.0 and not self.is_new()):
-			if self.product:
-				rate = frappe.db.get_value("Insurance Product", self.product, "commission_rate")
-				self.commission_rate = flt(rate or 0.0)
-			else:
-				self.commission_rate = 0.0
-		elif self.product and self.commission_rate is None:
-			rate = frappe.db.get_value("Insurance Product", self.product, "commission_rate")
-			self.commission_rate = flt(rate or 0.0)
-
-		# Fetch settings for defaults
-		settings = frappe.get_single("Bavic Settings")
-		
-		# Default withholding tax percent if None
-		if self.withholding_tax_percent is None or flt(self.withholding_tax_percent) == 0.0:
-			self.withholding_tax_percent = flt(settings.withholding_tax_percent or 0.0)
-
-		# Default company and agent percentages if both are unset/0
-		if (self.company_percent is None or flt(self.company_percent) == 0.0) and \
-		   (self.agent_percent is None or flt(self.agent_percent) == 0.0):
-			self.company_percent = flt(settings.company_commission_percent or 60.0)
-			self.agent_percent = flt(settings.agent_commission_percent or 40.0)
-		elif self.company_percent is None:
-			self.company_percent = flt(settings.company_commission_percent or 60.0)
-		elif self.agent_percent is None:
-			self.agent_percent = flt(settings.agent_commission_percent or 40.0)
-
+		# Same formula as calculate_commission in insurance_transaction.js.
 		premium = flt(self.amount or 0.0)
 		comm_rate = flt(self.commission_rate or 0.0)
 		wht_percent = flt(self.withholding_tax_percent or 0.0)
-		comp_pct = flt(self.company_percent or 0.0)
-		agent_pct = flt(self.agent_percent or 0.0)
+		comp_pct = flt(self.company_percent) if flt(self.company_percent) else 60.0
+		agent_pct = flt(self.agent_percent) if flt(self.agent_percent) else 40.0
 
-		# 1. Total Commission Amount
 		self.commission_amount = (premium * comm_rate) / 100.0
-
-		# 2. Withholding Tax Amount
 		self.withholding_tax_amount = (self.commission_amount * wht_percent) / 100.0
-
-		# 3. Net Commission Amount
 		self.net_commission_amount = self.commission_amount - self.withholding_tax_amount
-
-		# 4. Split Net Commission between Company and Agent
 		self.company_amount = (self.net_commission_amount * comp_pct) / 100.0
 		self.agent_amount = (self.net_commission_amount * agent_pct) / 100.0
 

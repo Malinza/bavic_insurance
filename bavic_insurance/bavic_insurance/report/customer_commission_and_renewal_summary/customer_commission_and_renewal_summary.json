@@ -12,7 +12,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": null,
- "modified": "2026-07-17 01:08:28.521480",
+ "modified": "2026-09-25 15:00:00.000000",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Customer Commission and Renewal Summary",
@@ -21,7 +21,32 @@
  "ref_doctype": "Insurance Transaction",
  "report_name": "Customer Commission and Renewal Summary",
  "report_type": "Script Report",
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "BAVIC System Administrator"
+  },
+  {
+   "role": "BAVIC System Owner"
+  },
+  {
+   "role": "BAVIC Executive"
+  },
+  {
+   "role": "BAVIC Director of Operations"
+  },
+  {
+   "role": "BAVIC Department Data Owner"
+  },
+  {
+   "role": "BAVIC Compliance Reviewer"
+  },
+  {
+   "role": "BAVIC Finance User"
+  }
+ ],
  "snapshot_report": 0,
  "timeout": 0
 }

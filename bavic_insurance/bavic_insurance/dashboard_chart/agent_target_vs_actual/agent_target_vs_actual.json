@@ -10,14 +10,51 @@
  "idx": 0,
  "is_public": 1,
  "is_standard": 1,
- "modified": "2026-08-17 22:04:54.116749",
+ "modified": "2026-09-25 15:00:00.000000",
  "modified_by": "Administrator",
  "module": "BAVIC Insurance",
  "name": "Agent Target vs Actual",
  "number_of_groups": 0,
  "owner": "Administrator",
  "report_name": "Agent Target Performance",
- "roles": [],
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "BAVIC System Administrator"
+  },
+  {
+   "role": "BAVIC System Owner"
+  },
+  {
+   "role": "BAVIC Executive"
+  },
+  {
+   "role": "BAVIC Director of Operations"
+  },
+  {
+   "role": "BAVIC Department Data Owner"
+  },
+  {
+   "role": "BAVIC Compliance Reviewer"
+  },
+  {
+   "role": "BAVIC Team Supervisor"
+  },
+  {
+   "role": "BAVIC Finance User"
+  },
+  {
+   "role": "BAVIC Sales User"
+  },
+  {
+   "role": "BAVIC Client Support"
+  },
+  {
+   "role": "BAVIC External User"
+  }
+ ],
  "show_values_over_chart": 0,
  "time_interval": "Yearly",
  "timeseries": 0,
